@@ -1,0 +1,667 @@
+
+<!DOCTYPE html>  <!-- HTML - Jon Alvarez Justo for NTNU/Small Satellites/HYPSO-1 mission -->
+                 <!-- LinkedIn: https://www.linkedin.com/in/jonalvarezjusto/ --> 
+                 <!-- For other questions or inquirires, contact the NTNU Small Satellites Lab responsible for the HYPSO mission -->
+<html lang="en"> <!-- Help search engine identifiy the language
+
+
+  <!-- Header next --> 
+  <head>
+    <meta charset="UTF-8"> <!-- character encoding to render the text content -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"> <!-- To avoid issues rendering the web in Internet Explorer browser - it will be use the most recent rendering engine --> 
+    <meta name="viewport" content="width=device-width, initial-scale=1"> <!-- To adjust the width to the device width with scale 1:1 --> 
+    
+    <!-- Using further the Open Graph Protocol (OGP) so that previews when sharing index.html or any other of the .html (e.g. in  social media) get this info for the preview  -->
+    <meta property="og:title" content="An Open Hyperspectral Dataset with Sea-Land-Cloud Ground-Truth from the HYPSO-1 Satellite">
+    <meta property="og:description" content="Hyperspectral Imaging, employed in satellites for space remote sensing, like HYPSO-1, faces constraints due to few labeled data sets, affecting the training of AI models demanding these ground-truth annotations. In this work, we introduce The HYPSO-1 Sea-Land-Cloud-Labeled Dataset, an open dataset with 200 diverse hyperspectral images from the HYPSO-1 mission, available in both raw and calibrated forms for scientific research in Earth observation. Moreover, 38 of these images from different countries include ground-truth labels at pixel-level totaling about 25 million spectral signatures labeled for sea/land/cloud categories. To demonstrate the potential of the dataset and its labeled subset, we have additionally optimized a deep learning model (1D Fully Convolutional Network), achieving superior performance to the current state of the art. The complete dataset, ground-truth labels, deep learning model, and software code are openly accessible for download at this website which we provide as a supplementary material for the paper AN OPEN HYPERSPECTRAL DATASET WITH SEA-LAND-CLOUD GROUND-TRUTH FROM THE HYPSO-1 SATELLITE.">
+    <meta property="og:image" content="https://ntnu-smallsat-lab.github.io/hypso1_sea_land_clouds_dataset/IMAGES/Earth-observation.jpg">
+
+    <meta property="og:url" content="https://ntnu-smallsat-lab.github.io/hypso1_sea_land_clouds_dataset/"> <!-- Sharing URL -->
+    <meta property="og:type" content="website">
+
+
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:500,800,200" rel="stylesheet">
+        <!-- Font size style, and numbers are for regular text, bold text, and light text --> 
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css" rel="stylesheet"> <!-- To insert icons --> 
+    <link href="css/aos.css?ver=1.1.0" rel="stylesheet">
+      <!-- Animations when scrolling down --> 
+    <link href="css/bootstrap.min.css?ver=1.1.0" rel="stylesheet">
+      <!-- For the layout structure / more visually appealing --> 
+    <link href="css/main.css?ver=1.1.0" rel="stylesheet">
+      <!-- Additional CSS file (bootstrap-switch) licensed under MIT (https://github.com/creativetimofficial/now-ui-kit/blob/master/LICENSE.md) --> 
+
+
+      <!-- The following is for the data tables --> 
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+
+    <noscript>
+      <style type="text/css">
+        [data-aos] {
+            opacity: 1 !important;
+            transform: translate(0) scale(1) !important;
+        }
+      </style>
+    </noscript> <!-- Opacity and transform for animations from AOS when front-end JavaScript not available -->
+
+
+
+
+    <style>
+      .fancy-sorting-button { /* Style for the button, hover is the style for when the button is hovered over  */
+        background-color: #116FDA;
+        border: 1px solid #FFD700;
+        color: white;
+        padding: 3px 3px;
+        text-align: center;
+        text-decoration: underline;
+        display: inline-block;
+        font-size: 12px;
+        font-weight: bold;
+        font-family: "Arial", sans-serif;
+        border-radius: 30px; /* Rounded borders */
+        cursor: pointer;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+        transition: background-color 0.25s ease-in-out; /* Time for the hover effect */
+    }
+    .fancy-sorting-button:hover { /* Applies to the hover effect */
+        background-color: #0D5A8E; /* Color */ 
+        color: #FFF; /* Color for the text */
+        transform: scale(1.07); /* Scale up the size of the button */
+    }
+
+
+    .fancy-main-button { /* Style for the button, hover is the style for when the button is hovered over  */
+        background-color: #116FDA;
+        border: 2px solid #FFD700;
+        color: white;
+        padding: 12px 24px;
+        text-align: center;
+        text-decoration: underline;
+        display: inline-block;
+        font-size: 20px;
+        font-weight: bold;
+        font-family: "Arial", sans-serif;
+        border-radius: 30px; /* Rounded borders */
+        cursor: pointer;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+        transition: background-color 0.25s ease-in-out; /* Time for the hover effect */
+    }
+    .fancy-main-button:hover { /* Applies to the hover effect */
+        background-color: #0D5A8E; /* Color */ 
+        color: #FFF; /* Color for the text */
+        transform: scale(1.03); /* Scale up the size of the button */
+    }
+
+
+    .fancy-smaller-button_for-downloads{ /* Style for the button, hover is the style for when the button is hovered over  */
+        background-color: #116FDA;
+        border: 1px solid #FFD700;
+        color: white;
+        padding: 4px 4px;
+        text-align: center;
+        text-decoration: underline;
+        display: inline-block;
+        font-size: 14px;
+        font-weight: bold;
+        font-family: "Arial", sans-serif;
+        border-radius: 30px; /* Rounded borders */
+        cursor: pointer;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+        transition: background-color 0.25s ease-in-out; /* Time for the hover effect */
+    }
+    .fancy-smaller-button_for-downloads:hover { /* Applies to the hover effect */
+        background-color: #0D5A8E; /* Color */ 
+        color: #FFF; /* Color for the text */
+        transform: scale(1.05); /* Scale up the size of the button */
+    }
+
+
+    .center_content {
+    display: flex;
+    justify-content: center;
+    }
+
+
+   .page-header {
+        background-color: rgba(0, 0, 255, 0.2); 
+      } /* This is used to compensate for the green filter for the header in the boostrap */
+
+
+
+
+    .scroll-down {
+      margin-top: 30px;
+      color: #838383;
+      font-size: 22px; 
+      text-align: center;
+    }  /* To choose the color and font of the text on top of the arrow for scrolling, and also where to place it */ 
+
+    .scroll-text {
+      margin-bottom: 50px;
+    } /* distance between the text and the arrow */
+
+    .fas.fa-chevron-down {
+      font-size: 70px;
+      color: #838383;
+      animation: bounce 1s infinite;
+    } /* font-size for the arrow, color, and bouncing freq. */ 
+
+    @keyframes bounce {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(10px);
+      }
+    }
+
+
+
+    .image-container {
+      padding: 5px;
+      background-color: #838383;
+      border-radius: 10px;
+    }
+
+
+    .large-font {
+      font-size: 16px;
+    } /* To use for text */
+
+
+    .footer {
+      background-color: #004466;
+      color: white;
+      padding: 10px 0;
+      text-align: center;
+    }
+
+    .footer p {
+      color: white; /* Set the desired link color */
+    }
+
+    .small-text {
+      font-size: 14px; /* Adjust the font size as needed */
+    }
+
+
+
+    .card {
+      width: 90%;
+      margin: 0 auto;
+    }
+    
+    .cc-profile-image {
+      display: inline-block;
+      margin-right: 10px;
+    }
+
+
+
+
+    .carousel-image {
+        position: relative;
+    }
+
+    .carousel-text {
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 18px;
+        color: white;
+        background-color: rgba(0, 0, 0, 0.7);
+        padding: 5px;
+      }
+
+
+
+
+
+    /* For the data tables */
+    .custom-table {
+      background: linear-gradient(to bottom, #3F88C5, #003366);
+      color: white;
+    } /* Affects only header, not the body */
+
+    .table-background{
+      background: linear-gradient(to bottom, #004466, #006699);
+    }
+
+
+
+    /* The following is to zoom in the RGB composite when hovering over the image */
+    .zoomable-image {
+      transition: transform 0.1s; 
+    }
+    .zoomable-image:hover {
+      transform: scale(1.5); /* More scaling needed if the RGB composite is very small */
+    }
+
+
+
+    /* The following is to zoom in the RGB composite when hovering over the image */
+    .zoomable-image-conf-matrix {
+      transition: transform 0.1s; 
+    }
+    .zoomable-image-conf-matrix:hover {
+      transform: scale(3); /* More scaling needed if the RGB composite is very small */
+    }
+
+
+
+
+    /* The following is to zoom in the Google Maps location when hovering over the image */
+    .zoomable-location_GoogleMaps {
+      transition: transform 0.1s; 
+    }
+    .zoomable-location_GoogleMaps:hover {
+      transform: scale(3); /* More scaling needed if the RGB composite is very small */
+    }
+
+
+    .text-below-image {
+      text-align: center;
+      margin-top: 10px; /* Adjust as needed */
+    }
+
+
+    .nav-gradient {
+      background: linear-gradient(to bottom, #006699, #004466);
+    } /* For navigation bar. */
+  
+    .nav-item a.nav-link {
+      font-size: 18px;
+      color: white; 
+    }
+
+    </style>
+  </head>
+
+
+
+
+
+  <!-- Body next --> 
+  <body id="dataset"> <!-- ID. purpose of the website -->
+    <!-- Header: NAVIGATION BAR + BANNER (as a slider) --> 
+    <br><br><br><br><br>
+    <header>
+    <!-- Introductory banner -->
+        <style>
+
+
+          .right-text {
+            text-align: right;
+            transform: translateX(0); /* Reset the center alignment */
+          }
+
+        </style>
+
+        <!-- Introductory banner --> 
+        <div class="profile-page" style="height: 900px;"> <!-- style for the page banner --> 
+          <div class="wrapper"> <!-- relates to CSS --> 
+            <div class="page-header" filter-color="#green"> <!-- define the layout from the bootstrap --> 
+                <!-- To make the header smaller add to the class: page-header-small--> 
+              <div class="page-header-image" data-parallax="true" style="background-image: url('IMAGES/Deep_Learning_header_coverpage.jpg')"></div>
+                <!-- page-header-image: Associated with CSS-->
+                <!-- parallax: relates to the scrolling - if removed the effect might be the same -->
+                <!-- An image is used as background -->
+
+
+                <div class="container"> <!-- parent container --> 
+
+                  <div class="content-center"> <!-- center the content in the container --> 
+
+               <!--      <div>
+                      <div class="cc-profile-image">
+                        <a href="about.html">
+                          <img src="IMAGES/HYPSO1Platform.jpg" alt=""/>
+                        </a>
+                      </div> 
+                    </div> -->
+
+                    <div class="h2 title text-white">
+                    Example of a Supervised Deep Learning Neural Network Model: Pixel-Level Sea-Land-Clouds Classification
+                    </div>
+
+
+                    <div class="scroll-down">
+                      <p class="scroll-text" style="color: #CCC;">
+                        Continue scrolling down to learn more about our Deep Learning Model developed for classifying sea/land/clouds on the HYPSO-1 dataset. The model remains relatively simple suggesting its viability for inference both for on-ground data processing and for on-board inference at the System-on-Chip (SoC) software on the HYSPO-1 platform.
+                     </p>
+
+                      <a href="#right-after-header" class="smooth-scroll">
+                        <i class="fas fa-chevron-down"></i>
+                        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+                          <!-- the arrow is from that .css file --> 
+                      </a>
+                    </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+
+        <nav class="navbar navbar-expand-lg fixed-top nav-gradient navbar-transparent bg-info" color-on-scroll="400">
+          <!-- navbar from the bootstrap CSS -->
+          <!-- navbar-expand-lg: expand to the full width of the viewport large screens -->
+          <!-- fixed-top: keep the bar on top when scrolling down -->
+          <!-- navbar-transparent: transparent navigation bar when still not scrolled down --> 
+          <!-- bg-primary: primary color --> 
+          <!-- color-on-scroll: the bar will acquire a color once scrolled to position 400 -->
+
+          <div class="container"> <!-- centered container (from Bootstrap CSS) / the content fits to the center more nicely --> 
+
+            <div class="collapse navbar-collapse justify-content-start" id="navigation_bar">
+              <!-- collapse: on smaller screens the container will collapse -->
+              <!-- navbar-collapse: specifies that the bar is for navigation across sections -->
+              <!-- justify-content-end: the navigation bar is justified to the right --> 
+              <!-- justify-content-start: the navigation bar is justified to the left --> 
+              <!-- center_content: CSS applied to center the navigation bar -->
+
+
+              <ul class="navbar-nav"> <!-- start the list, navbar-nav: the list is of navigation items -->
+                
+
+
+                <li class="nav-item logo-item">
+                    <a class="navbar-brand" href="https://www.ntnu.edu/smallsat" target="_blank">
+                        <img src="IMAGES/HYPSO_logo.png" alt="" style="width: 80px; height: auto;">
+                    </a>
+                </li>
+                <li class="nav-item logo-item">
+                    <a class="navbar-brand" href="https://www.ntnu.edu" target="_blank">
+                        <img src="IMAGES/NTNU_logo.png" alt="" style="width: 80px; height: auto;">
+                    </a>
+                </li>
+
+                <li class="nav-item logo-item">
+                    <a class="navbar-brand" href="https://www.ieee-whispers.com" target="_blank">
+                        <img src="IMAGES/WHISPERS_logo.jpg" alt="" style="width: 150px; height: auto;">
+                    </a>
+                </li>
+
+
+
+                <li class="nav-item">
+                  <a class="nav-link" href="index.html" style="font-size: 18px;">HOME</a>
+                </li>
+                <!-- <li> </li> similar to \item in LaTeX; nav-item: the item is for navigation -->
+                <!--  <a> </a> for hyperlinks; nav-link: corresponds to a navigation link, when clicking a smooth-scroll will apply -->
+                <li class="nav-item">
+                  <a class="nav-link" href="dataset.html" style="font-size: 18px;">DATASET</a>
+                </li>
+
+                <li class="nav-item">
+                  <a class="nav-link" href="DL_model.html" style="font-size: 18px;">AI MODEL</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="codes.html" style="font-size: 18px;">SW CODE</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="about.html" style="font-size: 18px;">AUTHORS & HYPSO</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="paper_citation.html" target="_blank" style="font-size: 18px;">CITATION</a>
+                </li>
+
+
+
+
+              </ul> <!-- Close the list --> 
+            </div> 
+          </div> <!-- Close the container --> 
+        </nav> <!-- Close the navigation bar -->
+
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+    </header>
+
+
+
+<div class="section" id="right-after-header">
+
+
+ <div class="container">
+
+    <h1>A Classification Deep Learning Model on the HYPSO-1 Dataset</h1>
+    <p class="intro" style="font-size: 18px; line-height: 1.5;">
+    To demonstrate the significance of our dataset for Earth and ocean observation, HSI data processing and sea/land/clouds classification tasks, we adapt the following 1D Fully Convolutional Network (FCN) architecture to tackle this classification problem. The 1D FCN, originally designed for regression-based predictions of e.g. clay content in soil spectroscopy, as detailed in <a href="https://www.mdpi.com/1424-8220/18/9/3169" target="_blank">previous works</a> (2018) was later adapted to address classification tasks for soil texture, as explained in the <a href="https://arxiv.org/abs/1901.04846" target="_blank">state of the art</a> (2019). In our work, as depicted in the figure below, we employ the 2019 architecture, but we make several adjustments to its hyper-parameters to boost its performance on our dataset. Contrary to the 2019 classification model which utilizes four convolutions with 32, 32, 64, and 64 kernels (all of size 3), our convolutions are expanded to 32, 64, 96, and 128 kernels, increasing the kernel size to 6 for each filter to enhance our neural network’s efficacy. Despite using more and larger kernels, our model, with 124,163 parameters trained using categorical cross-entropy loss over one epoch in 300-pixel batches on raw data excluding the first and last three noisy channels, remains relatively simple. This suggests the model is apt for inference, suitable both for on-ground processing and for the System-on-Chip (SoC) software on-board the HYPSO-1 platform. As we elaborate next in this page, our adapted 1D FCN model applied to the HYPSO-1 Sea-Land-Cloud-Labeled Dataset achieves substantially higher scores compared to the existing literature.
+    </p>
+  </div>
+
+    <div style="display: flex; justify-content: center;">
+      <a href="https://studntnu-my.sharepoint.com/:f:/g/personal/jonalv_ntnu_no/Eo7DnXJicJBJibE9gmJbI2YB9M4YtQOat0TpuLBOXrNt6A?e=5%3aRNhbVs&fromShare=true&at=9" target="_blank" class="fancy-main-button">DOWNLOAD TRAINED DEEP LEARNING MODEL</a>
+    </div>
+    <div class="container" style="text-align: center;">
+      * We provide also instructions to use the trained model.
+    </div>  
+
+
+
+
+    <figure class="text-below-image">
+        <a href="IMAGES/Architecture.png" target="_blank">
+            <img src="IMAGES/Architecture.png" alt="" style="width: 700px; height: auto;">
+        </a>
+      <!-- <figcaption></figcaption> --> 
+    </figure>
+
+</div>
+
+
+
+
+
+ <div class="container">
+
+    <h1>Training/Validation/Testing Random Split</h1>
+    <p class="intro" style="font-size: 18px; line-height: 1.5;">
+      In the results section of our <a href="https://arxiv.org/abs/2308.13679" target="_blank">paper</a>, we specify that the training set comprises 30 images (around 20 million signatures), the validation set contains 3 images (approximately 2 million signatures), and the 5 remaining images are used as test set (over 3 million signatures). 
+      <br>
+      We provide the IDs of the images used for the training, validation, and testing of the model as indicated in the next table. The images were randomly selected, but it serves to clarify the exact data we have utilized for training, validating, and testing the model. Remeber that you can find the IDs and their associated images in <a href="dataset.html">Section DATASET</a>. 
+
+
+      <table class="table table-striped custom-table text-center table-background" style="width: 180%;">
+
+        <thead>
+          <tr>
+            <th style="width: 10%; text-align: center;">Set</th>
+            <th style="width: 69%; text-align: center;">Image IDs</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody">
+          <tr><td>Training Set</td><td>4, 5, 6, 7, 9, 10, 15, 16, 17, 25, 26, 47, 56, 89, 95, 96, 107, 111, 124, 137, 148, 151, 158, 166, 178, 211, 253, 255, 266, 273</td>
+          <tr><td>Validation Set</td><td>120, 127, 204</td>
+          <tr><td>Testing Set</td><td>39, 58, 59, 150, 207</td>
+
+          </tr>
+
+
+
+        </tbody>
+      </table>
+
+
+
+    </p>
+  </div>
+
+
+
+
+
+</div>
+
+
+<div class="container">
+    <h1>Performance Evaluation of the 1D FCN Model</h1>
+    <p class="intro" style="font-size: 18px; line-height: 1.5;">
+      Our adapted 1D FCN model applied to the HYPSO-1 Sea-Land-Cloud-Labeled Dataset achieves substantially high scores: 0.95 for overall accuracy, 0.91 for average accuracy, and 0.92 for kappa. These results highlight the superior performance of our network configuration for our dataset compared to the existing literature. In the paper we present how the model performs for an image in the Stuary of Ría de Arousa in Galicia (Spain), from the test set. On this page, we display additional results in the following table for the remaining captures in the test set. The table shows that the <i>clouds</i> category exhibits a lower hit rate accuracy compared to the <i>sea</i> and <i>land</i> classes. This can be attributed to the dataset's slightly skewed distribution, with clouds and overexposed pixels constituting a minority class, alongside other factors influencing these results such as the training process of the network. 
+    </p>
+
+
+
+
+<div style="display: flex; justify-content: center;"> <!-- Table in the center of the page -->
+
+    <table class="table table-striped custom-table text-center table-background" style="width: 80%;">
+
+        <thead>
+          <tr>
+            <th style="width: 15%; text-align: center;">RGB</th>
+            <th style="width: 15%; text-align: center;">Labeled & Predicted</th>
+            <th style="width: 10%; text-align: center;">Confusion Matrix</th>
+            <th style="width: 10%; text-align: center;">Image ID, country and date</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody">
+
+
+          <tr>
+              <td> 
+                <img src="IMAGES/LABELED_DATA_IMAGES/UNBINNED_RGB/39-qatar_2022-12-13-unbinned-converted-png.png" alt="Image" class="zoomable-image" style="width: 200px; height: 230px;"> </td> <!-- RGB compiste -->          
+              </td> 
+              <td> 
+                <img src="IMAGES/TESTING_SET_RESULTS/39-INFERENCE_TESTING_IMAGE_PREDICTION-39-20221213_CaptureDL_qatar_2022_12_13T06_34_13.png" alt="Image" class="zoomable-image" style="width: 300px; height: 230px;">
+              </td>
+
+              <td> 
+                <img src="IMAGES/TESTING_SET_RESULTS/39-INFERENCE_TESTING_IMAGE_CONF_MATRX-39-20221213_CaptureDL_qatar_2022_12_13T06_34_13.png" alt="Image" class="zoomable-image-conf-matrix" style="width: 300px; height: 230px;">
+              </td>
+
+
+            <td>39 <br>Qatar on 13th December 2022</td>
+          </tr>
+
+
+          <tr>
+              <td> 
+                <img src="IMAGES/LABELED_DATA_IMAGES/UNBINNED_RGB/58-blanca_2022-12-04-unbinned-converted-png.png" alt="Image" class="zoomable-image" style="width: 200px; height: 230px;"> </td> <!-- RGB compiste -->          
+              </td> 
+              <td> 
+                <img src="IMAGES/TESTING_SET_RESULTS/58-INFERENCE_TESTING_IMAGE_PREDICTED_IMAGE-58-20221205_CaptureDL_blanca_2022_12_04T13_32_36.png" alt="Image" class="zoomable-image" style="width: 300px; height: 230px;">
+              </td>
+
+
+              <td> 
+                <img src="IMAGES/TESTING_SET_RESULTS/58-INFERENCE_TESTING_IMAGE_CONF_MATRX-58-20221205_CaptureDL_blanca_2022_12_04T13_32_36.png" alt="Image" class="zoomable-image-conf-matrix" style="width: 300px; height: 230px;">
+              </td>
+
+            <td>58 <br>Argentina on 05th December 2022</td>
+          </tr>
+
+
+
+          <tr>
+              <td> 
+                <img src="IMAGES/LABELED_DATA_IMAGES/UNBINNED_RGB/59-vigo_2022-12-04-unbinned-converted-png.png" alt="Image" class="zoomable-image" style="width: 200px; height: 230px;"> </td> <!-- RGB compiste -->          
+              </td> 
+              <td> 
+                <img src="IMAGES/TESTING_SET_RESULTS/59-INFERENCE_TESTING_IMAGE_PRDICTED_IMAGE-59-20221205_CaptureDL_vigo_2022_12_04T11_35_18.png" alt="Image" class="zoomable-image" style="width: 300px; height: 230px;">
+              </td>
+
+
+              <td> 
+                <img src="IMAGES/TESTING_SET_RESULTS/59-INFERENCE_TESTING_IMAGE_CONF_MATRIX-59-20221205_CaptureDL_vigo_2022_12_04T11_35_18.png" alt="Image" class="zoomable-image-conf-matrix" style="width: 300px; height: 230px;">
+              </td>
+
+
+            <td>59 <br>Spain on 05th December 2022</td>
+          </tr>
+
+
+
+          <tr>
+              <td> 
+                <img src="IMAGES/LABELED_DATA_IMAGES/UNBINNED_RGB/150-kuwait_2022_09_26T06_58_45-unbinned-converted-png.png" alt="Image" class="zoomable-image" style="width: 200px; height: 230px;"> </td> <!-- RGB compiste -->          
+              </td> 
+              <td> 
+                <img src="IMAGES/TESTING_SET_RESULTS/150-INFERENCE_TESTING_IMAGE_IMAGE_PREDICTION-150-20220926_CaptureDL_00_kuwait_2022_09_26T06_58_45.png" alt="Image" class="zoomable-image" style="width: 300px; height: 230px;">
+              </td>
+
+
+              <td> 
+                <img src="IMAGES/TESTING_SET_RESULTS/150-INFERENCE_TESTING_IMAGE_CONF_MATRX-150-20220926_CaptureDL_00_kuwait_2022_09_26T06_58_45.png" alt="Image" class="zoomable-image-conf-matrix" style="width: 300px; height: 230px;">
+              </td>
+
+            <td>150 <br>Iran on 26th September 2022</td>
+          </tr>
+
+
+
+          <tr>
+              <td> 
+                <img src="IMAGES/LABELED_DATA_IMAGES/UNBINNED_RGB/207-chao_2022_08_08T02_26_46-unbinned-converted-png.png" alt="Image" class="zoomable-image" style="width: 200px; height: 230px;"> </td> <!-- RGB compiste -->          
+              </td> 
+              <td> 
+                <img src="IMAGES/TESTING_SET_RESULTS/207-INFERENCE_TESTING_IMAGE_IMAGE_PREDICTION-207-20220808_CaptureDL_00_chao_2022_08_08T02_26_46.png" alt="Image" class="zoomable-image" style="width: 300px; height: 230px;">
+              </td>
+
+
+              <td> 
+                <img src="IMAGES/TESTING_SET_RESULTS/207-INFERENCE_TESTING_IMAGE_CONF_MATRIX-207-20220808_CaptureDL_00_chao_2022_08_08T02_26_46.png" alt="Image" class="zoomable-image-conf-matrix" style="width: 300px; height: 230px;">
+              </td>
+
+            <td>207 <br>China on 08th August 2022</td>
+          </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+
+
+
+</div>
+
+
+
+
+
+
+    <footer class="footer">
+      <div class="container text-center">
+      </div>
+      <div class="text-center text-muted">
+        <p>
+          Users within the open community are fully permitted and encouraged to access, download, analyze, and use the data, ground-truth labels, model, and codes. Proper credit must be given to the authors mentioned in the <a href="paper_citation.html" target="_blank">BibTeX citation in this page's menu</a>.
+          <br>
+          Designed, curated and developed by Jon Alvarez Justo. A work inspired by <a href="https://nicepage.com" target="_blank">Creative CV</a>.
+          <br>
+          &copy; 2023 Norwegian University of Science and Technology (NTNU) in Trondheim, Norway. All rights reserved.
+        </p>
+      </div>
+    </footer>
+
+
+
+    <script src="js/core/jquery.3.2.1.min.js?ver=1.1.0"></script>
+    <script src="js/core/popper.min.js?ver=1.1.0"></script>
+    <script src="js/core/bootstrap.min.js?ver=1.1.0"></script>
+    <script src="js/now-ui-kit.js?ver=1.1.0"></script>
+    <script src="js/aos.js?ver=1.1.0"></script>
+    <script src="scripts/main.js?ver=1.1.0"></script>
+
+
+  </body>
+</html>
+
+
+
+

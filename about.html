@@ -1,0 +1,631 @@
+
+<!DOCTYPE html>  <!-- HTML - Jon Alvarez Justo for NTNU/Small Satellites/HYPSO-1 mission -->
+                 <!-- LinkedIn: https://www.linkedin.com/in/jonalvarezjusto/ --> 
+                 <!-- For other questions or inquirires, contact the NTNU Small Satellites Lab responsible for the HYPSO mission -->
+<html lang="en"> <!-- Help search engine identifiy the language
+
+
+  <!-- Header next --> 
+  <head>
+    <meta charset="UTF-8"> <!-- character encoding to render the text content -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"> <!-- To avoid issues rendering the web in Internet Explorer browser - it will be use the most recent rendering engine --> 
+    <meta name="viewport" content="width=device-width, initial-scale=1"> <!-- To adjust the width to the device width with scale 1:1 --> 
+
+    <!-- Using further the Open Graph Protocol (OGP) so that previews when sharing index.html or any other of the .html (e.g. in  social media) get this info for the preview  -->
+    <meta property="og:title" content="An Open Hyperspectral Dataset with Sea-Land-Cloud Ground-Truth from the HYPSO-1 Satellite">
+    <meta property="og:description" content="Hyperspectral Imaging, employed in satellites for space remote sensing, like HYPSO-1, faces constraints due to few labeled data sets, affecting the training of AI models demanding these ground-truth annotations. In this work, we introduce The HYPSO-1 Sea-Land-Cloud-Labeled Dataset, an open dataset with 200 diverse hyperspectral images from the HYPSO-1 mission, available in both raw and calibrated forms for scientific research in Earth observation. Moreover, 38 of these images from different countries include ground-truth labels at pixel-level totaling about 25 million spectral signatures labeled for sea/land/cloud categories. To demonstrate the potential of the dataset and its labeled subset, we have additionally optimized a deep learning model (1D Fully Convolutional Network), achieving superior performance to the current state of the art. The complete dataset, ground-truth labels, deep learning model, and software code are openly accessible for download at this website which we provide as a supplementary material for the paper AN OPEN HYPERSPECTRAL DATASET WITH SEA-LAND-CLOUD GROUND-TRUTH FROM THE HYPSO-1 SATELLITE.">
+    <meta property="og:image" content="https://ntnu-smallsat-lab.github.io/hypso1_sea_land_clouds_dataset/IMAGES/Earth-observation.jpg">
+
+    <meta property="og:url" content="https://ntnu-smallsat-lab.github.io/hypso1_sea_land_clouds_dataset/"> <!-- Sharing URL -->
+    <meta property="og:type" content="website">
+
+
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:500,800,200" rel="stylesheet">
+        <!-- Font size style, and numbers are for regular text, bold text, and light text --> 
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css" rel="stylesheet"> <!-- To insert icons --> 
+    <link href="css/aos.css?ver=1.1.0" rel="stylesheet">
+      <!-- Animations when scrolling down --> 
+    <link href="css/bootstrap.min.css?ver=1.1.0" rel="stylesheet">
+      <!-- For the layout structure / more visually appealing --> 
+    <link href="css/main.css?ver=1.1.0" rel="stylesheet">
+      <!-- Additional CSS file (bootstrap-switch) licensed under MIT (https://github.com/creativetimofficial/now-ui-kit/blob/master/LICENSE.md) --> 
+
+
+      <!-- The following is for the data tables --> 
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const enlargeableImage = document.querySelector('.enlargeable-image');
+            enlargeableImage.addEventListener('mouseenter', function () {
+                this.classList.add('enlarged');
+            });
+
+            enlargeableImage.addEventListener('mouseleave', function () {
+                this.classList.remove('enlarged');
+            });
+        });
+    </script>
+
+
+    <noscript>
+      <style type="text/css">
+        [data-aos] {
+            opacity: 1 !important;
+            transform: translate(0) scale(1) !important;
+        }
+      </style>
+    </noscript> <!-- Opacity and transform for animations from AOS when front-end JavaScript not available -->
+
+
+
+
+    <style>
+      .fancy-sorting-button { /* Style for the button, hover is the style for when the button is hovered over  */
+        background-color: #116FDA;
+        border: 1px solid #FFD700;
+        color: white;
+        padding: 3px 3px;
+        text-align: center;
+        text-decoration: underline;
+        display: inline-block;
+        font-size: 12px;
+        font-weight: bold;
+        font-family: "Arial", sans-serif;
+        border-radius: 30px; /* Rounded borders */
+        cursor: pointer;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+        transition: background-color 0.25s ease-in-out; /* Time for the hover effect */
+    }
+    .fancy-sorting-button:hover { /* Applies to the hover effect */
+        background-color: #0D5A8E; /* Color */ 
+        color: #FFF; /* Color for the text */
+        transform: scale(1.07); /* Scale up the size of the button */
+    }
+
+
+    .fancy-main-button { /* Style for the button, hover is the style for when the button is hovered over  */
+        background-color: #116FDA;
+        border: 2px solid #FFD700;
+        color: white;
+        padding: 12px 24px;
+        text-align: center;
+        text-decoration: underline;
+        display: inline-block;
+        font-size: 20px;
+        font-weight: bold;
+        font-family: "Arial", sans-serif;
+        border-radius: 30px; /* Rounded borders */
+        cursor: pointer;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+        transition: background-color 0.25s ease-in-out; /* Time for the hover effect */
+    }
+    .fancy-main-button:hover { /* Applies to the hover effect */
+        background-color: #0D5A8E; /* Color */ 
+        color: #FFF; /* Color for the text */
+        transform: scale(1.03); /* Scale up the size of the button */
+    }
+
+
+    .fancy-smaller-button_for-downloads{ /* Style for the button, hover is the style for when the button is hovered over  */
+        background-color: #116FDA;
+        border: 1px solid #FFD700;
+        color: white;
+        padding: 4px 4px;
+        text-align: center;
+        text-decoration: underline;
+        display: inline-block;
+        font-size: 14px;
+        font-weight: bold;
+        font-family: "Arial", sans-serif;
+        border-radius: 30px; /* Rounded borders */
+        cursor: pointer;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+        transition: background-color 0.25s ease-in-out; /* Time for the hover effect */
+    }
+    .fancy-smaller-button_for-downloads:hover { /* Applies to the hover effect */
+        background-color: #0D5A8E; /* Color */ 
+        color: #FFF; /* Color for the text */
+        transform: scale(1.05); /* Scale up the size of the button */
+    }
+
+
+    .center_content {
+    display: flex;
+    justify-content: center;
+    }
+
+
+   .page-header {
+        background-color: rgba(0, 0, 255, 0.2); 
+      } /* This is used to compensate for the green filter for the header in the boostrap */
+
+
+
+
+
+
+
+    .scroll-down {
+      margin-top: 300;
+      color: #838383;
+      font-size: 22px; 
+      text-align: center;
+    }  /* To choose the color and font of the text on top of the arrow for scrolling, and also where to place it */ 
+
+    .scroll-text {
+      margin-bottom: 20px;
+    } /* distance between the text and the arrow */
+
+    .fas.fa-chevron-down {
+      font-size: 70px;
+      color: #838383;
+      animation: bounce 1s infinite;
+    } /* font-size for the arrow, color, and bouncing freq. */ 
+
+    @keyframes bounce {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(10px);
+      }
+    }
+
+
+
+    .image-container {
+      padding: 5px;
+      background-color: #838383;
+      border-radius: 10px;
+    }
+
+
+    .large-font {
+      font-size: 16px;
+    } /* To use for text */
+
+
+
+
+
+    .footer {
+      background-color: #004466;
+      color: white;
+      padding: 10px 0;
+      text-align: center;
+    }
+
+    .footer p {
+      color: white; /* Set the desired link color */
+    }
+
+
+
+
+
+    .small-text {
+      font-size: 14px; /* Adjust the font size as needed */
+    }
+
+
+
+    .card {
+      width: 90%;
+      margin: 0 auto;
+    }
+    
+    .cc-profile-image {
+      display: inline-block;
+      margin-right: 10px;
+    }
+
+
+
+
+    .carousel-image {
+        position: relative;
+    }
+
+    .carousel-text {
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 18px;
+        color: white;
+        background-color: rgba(0, 0, 0, 0.7);
+        padding: 5px;
+      }
+
+
+
+
+    /* For the data tables */
+    .custom-table {
+      background: linear-gradient(to bottom, #3F88C5, #003366);
+      color: white;
+    }
+
+    /* The following is to zoom in the RGB composite when hovering over the image */
+    .zoomable-image {
+      transition: transform 0.1s; 
+    }
+    .zoomable-image:hover {
+      transform: scale(10); /* More scaling needed if the RGB composite is very small */
+    }
+
+
+    /* The following is to zoom in the Google Maps location when hovering over the image */
+    .zoomable-location_GoogleMaps {
+      transition: transform 0.1s; 
+    }
+    .zoomable-location_GoogleMaps:hover {
+      transform: scale(3); /* More scaling needed if the RGB composite is very small */
+    }
+
+
+    .text-below-image {
+      text-align: center;
+      margin-top: 10px; /* Adjust as needed */
+    }
+
+    .nav-gradient {
+      background: linear-gradient(to bottom, #006699, #004466);
+    } /* For navigation bar. */
+  
+    .nav-item a.nav-link {
+      font-size: 18px;
+      color: white; 
+    }
+
+
+    .enlarged img {
+        transform: scale(1.1); /* Adjust the scale factor as needed */
+        transition: transform 0.3s ease; /* Add a smooth transition effect */
+    }
+
+    </style>
+  </head>
+
+
+
+
+
+  <!-- Body next --> 
+  <body id="dataset"> <!-- ID. purpose of the website -->
+    <!-- Header: NAVIGATION BAR + BANNER (as a slider) --> 
+    <header>
+    <!-- Introductory banner -->
+        <style>
+
+
+          .right-text {
+            text-align: right;
+            transform: translateX(0); /* Reset the center alignment */
+          }
+
+        </style>
+
+        <!-- Introductory banner --> 
+        <div class="profile-page"> <!-- style for the page banner --> 
+          <div class="wrapper"> <!-- relates to CSS --> 
+            <div class="page-header" filter-color="#green"> <!-- define the layout from the bootstrap --> 
+                <!-- To make the header smaller add to the class: page-header-small--> 
+              <div class="page-header-image" data-parallax="true" style="background-image: url('IMAGES/About_us_coverpage.jpg')"></div>
+                <!-- page-header-image: Associated with CSS-->
+                <!-- parallax: relates to the scrolling - if removed the effect might be the same -->
+                <!-- An image is used as background -->
+
+
+                <div class="container"> <!-- parent container --> 
+
+                  <div class="content-center"> <!-- center the content in the container --> 
+
+                    <div>
+                      <div class="cc-profile-image">
+                        <a href="about.html">
+                          <img src="IMAGES/HYPSO_logo.png" alt=""/>
+                        </a>
+                      </div> 
+                    </div>
+
+                    <div class="h2 title text-white">About us</div>
+
+
+                    <div class="scroll-down">
+                      <p class="scroll-text" style="color: #CCC;">
+                        Get to know who we are and keep scrolling down to see in real-time HYPSO-1 orbitting around the Earth.
+                     </p>
+
+                      <a href="#right-after-header" class="smooth-scroll">
+                        <i class="fas fa-chevron-down"></i>
+                        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+                          <!-- the arrow is from that .css file --> 
+                      </a>
+                    </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+
+
+          <nav class="navbar navbar-expand-lg fixed-top nav-gradient navbar-transparent bg-info" color-on-scroll="400">
+          <!-- navbar from the bootstrap CSS -->
+          <!-- navbar-expand-lg: expand to the full width of the viewport large screens -->
+          <!-- fixed-top: keep the bar on top when scrolling down -->
+          <!-- navbar-transparent: transparent navigation bar when still not scrolled down --> 
+          <!-- bg-primary: primary color --> 
+          <!-- color-on-scroll: the bar will acquire a color once scrolled to position 400 -->
+
+          <div class="container"> <!-- centered container (from Bootstrap CSS) / the content fits to the center more nicely --> 
+
+            <div class="collapse navbar-collapse justify-content-start" id="navigation_bar">
+              <!-- collapse: on smaller screens the container will collapse -->
+              <!-- navbar-collapse: specifies that the bar is for navigation across sections -->
+              <!-- justify-content-end: the navigation bar is justified to the right --> 
+              <!-- justify-content-start: the navigation bar is justified to the left --> 
+              <!-- center_content: CSS applied to center the navigation bar -->
+
+
+              <ul class="navbar-nav"> <!-- start the list, navbar-nav: the list is of navigation items -->
+                
+
+
+                <li class="nav-item logo-item">
+                    <a class="navbar-brand" href="https://www.ntnu.edu/smallsat" target="_blank">
+                        <img src="IMAGES/HYPSO_logo.png" alt="" style="width: 80px; height: auto;">
+                    </a>
+                </li>
+                <li class="nav-item logo-item">
+                    <a class="navbar-brand" href="https://www.ntnu.edu" target="_blank">
+                        <img src="IMAGES/NTNU_logo.png" alt="" style="width: 80px; height: auto;">
+                    </a>
+                </li>
+
+                <li class="nav-item logo-item">
+                    <a class="navbar-brand" href="https://www.ieee-whispers.com" target="_blank">
+                        <img src="IMAGES/WHISPERS_logo.jpg" alt="" style="width: 150px; height: auto;">
+                    </a>
+                </li>
+
+
+
+                <li class="nav-item">
+                  <a class="nav-link" href="index.html" style="font-size: 18px;">HOME</a>
+                </li>
+                <!-- <li> </li> similar to \item in LaTeX; nav-item: the item is for navigation -->
+                <!--  <a> </a> for hyperlinks; nav-link: corresponds to a navigation link, when clicking a smooth-scroll will apply -->
+                <li class="nav-item">
+                  <a class="nav-link" href="dataset.html" style="font-size: 18px;">DATASET</a>
+                </li>
+
+                <li class="nav-item">
+                  <a class="nav-link" href="DL_model.html" style="font-size: 18px;">AI MODEL</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="codes.html" style="font-size: 18px;">SW CODE</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="about.html" style="font-size: 18px;">AUTHORS & HYPSO</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="paper_citation.html" target="_blank" style="font-size: 18px;">CITATION</a>
+                </li>
+
+
+
+
+              </ul> <!-- Close the list --> 
+            </div> 
+          </div> <!-- Close the container --> 
+        </nav> <!-- Close the navigation bar -->
+  
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+    </header>
+
+
+<div class="section" id="right-after-header">
+
+<div class="section" id="Authors">
+  <div class="container">
+    <div class="card" data-aos="fade-up" data-aos-offset="10">
+      <div class="row">
+        <div class="col-md-22 ml-auto mr-auto">
+
+        <div class="card-body">
+          <div class="h4 mt-0 title">Author:</div>
+
+            <div>
+              <div class="cc-profile-image">
+                <a href="https://www.linkedin.com/in/jonalvarezjusto/" target="_blank"><img src="IMAGES/profile_Jon.JPG" alt="Image"/>
+                </a>
+                <p class="large-font"> <b> Jon A. Justo </b> </p>
+
+                  <p class="intro" style="font-size: 18px; line-height: 1.5;">
+
+
+                  <i>
+                  Dear user, <br>
+                  My personal professional motto is "letting data change today's future to tomorrow's truth". This is why I am convinced that this work and its data contribute with an important value to the open community. First, our data allows scientific exploration and research using a complete set of hundreds of images captured across many countries in the world by the NTNU/HYPSO-1 satellite. Second, our data with its ground-truth labels will be definitely crucial for AI researchers in our field in the need of extensive, consistent, and reliable ground-truth annotations to train their Machine Learning and Deep Learning models demanding the adequate generalisation of such models for unseen new data. Recently, one of my colleagues in the AI field told me: "never mess with the data!". Following this advice, we have put a thorough care on the data which we know is, certainly, the initial constructing brick of the AI models that many of you will be likely using the data for. As a matter of fact, in this work we indeed give an example of a Deep Learning model to solve a Computer Vision and Pattern Recognition problem both for on-ground data processing and for inference at the edge on-board HYPSO-1 platform, whose flexibility allows the update of its Software with the AI Deep Learning model at any time. <br>
+                  In my motto, I mention "tomorrow's truth" since data indeed has the capability to change our future for better. For a better and sustainable future, we must support the development of AI technology for the benefit of society, but in a safe and responsible manner. This intelligent technolgy allows us to automate many processes that end up benefiting our management and care of for instance, our Earth and ocean. This becomes even more important nowadays considering the climiate change effects we are seeing, and it also aligns with NTNU's moto about "knowledge for a better world". <br>
+                  Finally, I would like to express my grattitude to Professors Tor Arne Johansen at NTNU and Radu Tudor Ionescu at the University of Bucharest (UB) for their valuable feedback and insights while developing this work. I extend this appreciation to my fellow co-author colleagues in the article who have helped shape the article while giving me precious input. Thank you very much to all of you. Also, special thanks to Iuliana Georgescu also at UB, Anum Masood at the Dept. of Circulation and Imaging at NTNU and to the NTNU Small Satellites team who developed the payload of the HYPSO-1 satellite, in operation at the time of this work. <br>
+
+
+                  On behalf of my fellow colleagues, we hope this work brings value to your work and insights to you. <br>
+                  Thank you very much for reading these words.<br><br>
+
+                  Best regards, <br>
+                  Jon A. Justo <br>
+                  NTNU Small Satellites <br>
+
+
+                  Information and Communication Technologies Engineer (BSc, MSc) <br>
+                  Doctoral Researcher on Artificial Intelligence for Ocean Science at the Department of Cybernetics (NTNU) <br>
+
+                  </i>
+
+                
+                <br>
+              </p>
+
+              </div>
+              <div class="h4 mt-0 title">Co-Authored by:</div>
+                <div class="cc-profile-image"><a href="https://www.linkedin.com/in/josephlgarrett/" target="_blank"><img src="IMAGES/PROFILE_JOSEPH_GARRETT.jpg" alt="Image"/></a>
+                  <p class="large-font"> <b>Joseph Garrett </b> </p>
+                </div>
+                <div class="cc-profile-image"><a href="https://www.linkedin.com/in/dennis-langer-a13661174/" target="_blank"><img src="IMAGES/PROFILE_Dennis_D_Lenger.jpg" alt="Image"/></a>
+                  <p class="large-font"> <b> Dennis D. Langer </b></p>
+                </div>
+                <div class="cc-profile-image"><a href="https://www.linkedin.com/in/marie-henriksen/" target="_blank"><img src="IMAGES/PROFILE_Marie_Bøe_Henriksen.jpg" alt="Image"/></a>
+                  <p class="large-font"> <b> Marie B. Henriksen </b> </p>
+                </div> 
+                <div class="cc-profile-image"><a href="https://www.linkedin.com/in/radu-ionescu-5145374b/" target="_blank"><img src="IMAGES/PROFILE_Radu_Tudor_Ionescu.png" alt="Image"/></a>
+                  <p class="large-font"> <b> Radu T. Ionescu </b> </p>
+                </div>
+                <div class="cc-profile-image"><a href="https://www.linkedin.com/in/tor-arne-johansen-3362223/" target="_blank"><img src="IMAGES/PROFILE_TorArneJohansen.jpg" alt="Image"/></a>
+                  <p class="large-font"> <b> Tor A. Johansen </b> </p>
+                </div>
+
+              <p class="large-font"> This research is funded by the NO Grants 2014 – 2021 under Project ELO-Hyp contract no. 24/2020 and Research Council of Norway grants no. 223254 (AMOS), 328724 (Green Platform), and 325961 (HYPSCI). Special thanks to Iuliana Georgescu, Anum Masood, and the NTNU Small Satellites team.
+
+
+              <br>
+              </p>
+            </div>
+
+
+          </div>
+        </div>
+      </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+
+
+
+<br><br>
+<!-- <div style="display: flex; justify-content: center; align-items: center; height: 100vh; width: 100%;">
+  <div>
+    <h1>Real-Time HYPSO-1 Tracker</h1>
+    <iframe src="https://www.n2yo.com/?s=51053&live=1" width="100%" height="600" frameborder="0" scrolling="no"></iframe>
+    If needed, enable the <i>"keep selection centered"</i> option or navigate across the map to observe in real-time the satellite centered on the map as it orbits along its trajectory.
+  </div>
+</div> -->
+
+
+ <div style="display: flex; justify-content: flex-start; align-items: flex-start; height: 100vh; width: 100%;">
+        <div style="margin-left: 20px;"> <!-- Added margin for better alignment -->
+            <h1>Real-Time HYPSO-1 Tracker</h1>
+            <iframe src="https://www.n2yo.com/?s=51053&live=1" width="100%" height="600" frameborder="0" scrolling="no"></iframe>
+            If needed, enable the <i>"keep selection centered"</i> option or navigate across the map to observe in real-time the satellite centered on the map as it orbits along its trajectory.
+        </div>
+    </div>
+
+
+
+<div style="display: flex; flex-direction: column; align-items: flex-start;">
+    <h1>The HYPSO Mission to protect the Earth and ocean</h1>
+    <br>
+    <iframe width="800" height="450" src="https://www.youtube.com/embed/AgHT6oOumuE" frameborder="0" allowfullscreen></iframe>
+</div>
+
+
+
+
+<br><br>
+
+
+  <h1>The NTNU Small Satellites Team</h1> <br>
+  <a href="IMAGES/HYPSO1_Team.jpg" target="_blank" class="enlargeable-image">
+          <img src="IMAGES/HYPSO1_Team.jpg" alt="Image Description" style="max-width: 60%; height: auto;">
+  </a>
+
+
+
+
+<div class="section" id="contact">
+  <div class="cc-contact-information" style="background-image: url('IMAGES/Map_Gloshaugen.png')">
+    <div class="container">
+      <div class="cc-contact">
+        <div class="row">
+          <div class="col-md-9">
+            <div class="card mb-0" data-aos="zoom-in">
+              <div class="h4 text-center title">Contact - NTNU Small Satellites Lab</div>
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="card-body">
+                    <form action="NULL" method="POST">
+                      <div class="p pb-3"><strong>The most updated contact information of NTNU Small Satellites is available <a href="https://www.ntnu.edu/smallsat" target="_blank">here</a>. 
+                      <br>
+                      The NTNU Small Satellites Laboratory is presently situated at Høgskoleringen, 7034 Trondheim, Norway. It finds its home on the main campus of NTNU, known as Gløshaugen.
+
+                       </strong></div>
+                    </form>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="card-body">
+                    <p class="mb-0"><strong>Authors</strong></p>
+                    <p class="pb-2">In casy of any questions, feedback, or inquiries addressed to the authors feel free to contact us by clicking on our profile images above. 
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div></div></div>
+
+
+
+    <footer class="footer">
+      <div class="container text-center">
+      </div>
+      <div class="text-center text-muted">
+        <p>
+          Users within the open community are fully permitted and encouraged to access, download, analyze, and use the data, ground-truth labels, model, and codes. Proper credit must be given to the authors mentioned in the <a href="paper_citation.html" target="_blank">BibTeX citation in this page's menu</a>.
+          <br>
+          Designed, curated and developed by Jon Alvarez Justo. A work inspired by <a href="https://nicepage.com" target="_blank">Creative CV</a>.
+          <br>
+          &copy; 2023 Norwegian University of Science and Technology (NTNU) in Trondheim, Norway. All rights reserved.
+        </p>
+      </div>
+    </footer>
+
+    <script src="js/core/jquery.3.2.1.min.js?ver=1.1.0"></script>
+    <script src="js/core/popper.min.js?ver=1.1.0"></script>
+    <script src="js/core/bootstrap.min.js?ver=1.1.0"></script>
+    <script src="js/now-ui-kit.js?ver=1.1.0"></script>
+    <script src="js/aos.js?ver=1.1.0"></script>
+    <script src="scripts/main.js?ver=1.1.0"></script>
+
+
+  </body>
+</html>
+
+
+
+

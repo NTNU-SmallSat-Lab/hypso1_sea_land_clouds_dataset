@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <!-- Using further the Open Graph Protocol (OGP) so that previews when sharing index.html or any other of the .html (e.g. in  social media) get this info for the preview  -->
+    <meta property="og:title" content="An Open Hyperspectral Dataset with Sea-Land-Cloud Ground-Truth from the HYPSO-1 Satellite">
+    <meta property="og:description" content="Hyperspectral Imaging, employed in satellites for space remote sensing, like HYPSO-1, faces constraints due to few labeled data sets, affecting the training of AI models demanding these ground-truth annotations. In this work, we introduce The HYPSO-1 Sea-Land-Cloud-Labeled Dataset, an open dataset with 200 diverse hyperspectral images from the HYPSO-1 mission, available in both raw and calibrated forms for scientific research in Earth observation. Moreover, 38 of these images from different countries include ground-truth labels at pixel-level totaling about 25 million spectral signatures labeled for sea/land/cloud categories. To demonstrate the potential of the dataset and its labeled subset, we have additionally optimized a deep learning model (1D Fully Convolutional Network), achieving superior performance to the current state of the art. The complete dataset, ground-truth labels, deep learning model, and software code are openly accessible for download at this website which we provide as a supplementary material for the paper AN OPEN HYPERSPECTRAL DATASET WITH SEA-LAND-CLOUD GROUND-TRUTH FROM THE HYPSO-1 SATELLITE.">
+    <meta property="og:image" content="https://ntnu-smallsat-lab.github.io/hypso1_sea_land_clouds_dataset/IMAGES/Earth-observation.jpg">
+
+    <meta property="og:url" content="https://ntnu-smallsat-lab.github.io/hypso1_sea_land_clouds_dataset/"> <!-- Sharing URL -->
+    <meta property="og:type" content="website">
+
+</head> 
+<body>
+
+
+
+<pre id="citation">
+@misc{justo2023open,<br>
+      title={An Open Hyperspectral Dataset with Sea-Land-Cloud Ground-Truth from the HYPSO-1 Satellite}, <br>
+      author={Jon A. Justo, Joseph Garrett, Dennis D. Langer, Marie B. Henriksen, Radu T. Ionescu and Tor A. Johansen},<br>
+      year={2023},<br>
+      eprint={2308.13679},<br>
+      archivePrefix={arXiv},<br>
+      primaryClass={cs.CV}<br>
+}<br>
+
+</pre>
+
+
+
+
+<button id="copyButton">COPY CITATION</button>
+<p id="copiedMessage"></p>
+
+<script>
+    const copyButton = document.getElementById('copyButton');
+    const citation = document.getElementById('citation');
+    const copiedMessage = document.getElementById('copiedMessage');
+
+    copyButton.addEventListener('click', () => {
+        const textRange = document.createRange();
+        textRange.selectNode(citation);
+
+        const selectedText = window.getSelection();
+        selectedText.removeAllRanges();
+        selectedText.addRange(textRange);
+
+        // Using modern Clipboard API to replace deprecated execCommand
+        navigator.clipboard.writeText(citation.textContent).then(() => {
+            copyButton.textContent = 'Citation Copied!';
+            copiedMessage.innerHTML = '<strong>CITATION COPIED TO YOUR CLIPBOARD!</strong>'; // inner needed for bold
+                
+            setTimeout(() => {
+                copyButton.textContent = 'Copy Citation';
+                copiedMessage.textContent = '';
+            }, 2000);
+        }).catch(err => {
+            console.error('Failed to copy text: ', err);
+        });
+
+        selectedText.removeAllRanges();
+    });
+</script>
+
+
+
+
+</body>
+</html>
+
+
+
+
